@@ -16,13 +16,13 @@ public class MainController extends StandartFrameOperation {
 	}
 
 	public void btntActionCourse() {
-//		switchVisible();
-//		ApplicationController.courseController.switchVisible();
+		switchVisible();
+		ApplicationController.courseController.switchVisible();
 	}
 
 	public void btntActionConvert() {
-//		switchVisible();
-//		ApplicationController.convertController.switchVisible();
+		switchVisible();
+		ApplicationController.convertController.switchVisible();
 	}
 
 

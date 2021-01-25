@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import controller.ApplicationController;
 import entity.Course;
 import entity.Currency;
 
@@ -129,7 +130,7 @@ public class CourseDAO {
 		Float courseToOneDollar = myRs.getFloat("courseToOneDollar");
 		String where = myRs.getString("where");
 		Long id = myRs.getLong("id");
-		Currency currency = new CurrencyDAO().read(idCurrency);
+		Currency currency = ApplicationController.currencyController.getDAO().read(idCurrency);
 		Course temp = new Course(currency, courseToOneDollar, where);
 		temp.setId(id);
 		return temp;
