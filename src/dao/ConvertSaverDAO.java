@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import controller.ApplicationController;
 import entity.ConvertSaver;
 import entity.Currency;
 
@@ -34,7 +35,7 @@ public class ConvertSaverDAO {
 
 		try {
 			myStmt = myConn.createStatement();
-			myRs = myStmt.executeQuery("SELECT * FROM convertSaver");
+			myRs = myStmt.executeQuery("SELECT * FROM сonvertSaver");
 			while (myRs.next()) {
 				ConvertSaver tempEntity = convertRowToEntity(myRs);
 				list.add(tempEntity);
@@ -54,7 +55,7 @@ public class ConvertSaverDAO {
 
 		try {
 			name = "%" + name + "%";
-			myStmt = myConn.prepareStatement("SELECT * FROM convertSaver WHERE currencyCurrent in (select id from currency where name LIKE ?)");
+			myStmt = myConn.prepareStatement("SELECT * FROM сonvertSaver WHERE currencyCurrent in (select id from currency where name LIKE ?)");
 			myStmt.setString(1, name);
 			myRs = myStmt.executeQuery();
 			while (myRs.next()) {
@@ -71,13 +72,13 @@ public class ConvertSaverDAO {
 	public void create(ConvertSaver entity) throws Exception {
 		PreparedStatement myStmt = null;
 		try {
-			myStmt = myConn.prepareStatement("insert into convertSaver" 
+			myStmt = myConn.prepareStatement("insert into сonvertSaver" 
 									+ " (currencyCurrent, currencyNew, count, courseToOneDollar, where, dates, summ)" 
-									+ " values (?,?,?,?,?,?)");
+									+ " values (?,?,?,?,?,?,?)");
 			myStmt.setLong(1, entity.getCurrencyCurrent().getId());
 			myStmt.setLong(2, entity.getCurrencyNew().getId());
 			myStmt.setFloat(3, entity.getCount());
-			myStmt.setFloat(4, entity.getCourseToOneDollar());
+			myStmt.setString(4, entity.getCourseToOneDollar());
 			myStmt.setString(5, entity.getWhere());
 			myStmt.setDate(6, entity.getDates());
 			myStmt.setFloat(7, entity.getSumm());
@@ -106,19 +107,19 @@ public class ConvertSaverDAO {
 		}
 	}
 
-	public void update(ConvertSaver entityPast, Long idPast) throws Exception {
+	public void update(ConvertSaver entityNew, Long idPast) throws Exception {
 		PreparedStatement myStmt = null;
 		try {
-			myStmt = myConn.prepareStatement("UPDATE ConvertSaver SET "
+			myStmt = myConn.prepareStatement("UPDATE сonvertSaver SET "
 											+ "currencyCurrent=?, currencyNew=?, count=?, courseToOneDollar=?, where=?, dates=?, summ=?"
 											+ "  WHERE id=?");
-			myStmt.setLong(1, entityPast.getCurrencyCurrent().getId());
-			myStmt.setLong(2, entityPast.getCurrencyNew().getId());
-			myStmt.setFloat(3, entityPast.getCount());
-			myStmt.setFloat(4, entityPast.getCourseToOneDollar());
-			myStmt.setString(5, entityPast.getWhere());
-			myStmt.setDate(6, entityPast.getDates());
-			myStmt.setFloat(7, entityPast.getSumm());
+			myStmt.setLong(1, entityNew.getCurrencyCurrent().getId());
+			myStmt.setLong(2, entityNew.getCurrencyNew().getId());
+			myStmt.setFloat(3, entityNew.getCount());
+			myStmt.setString(4, entityNew.getCourseToOneDollar());
+			myStmt.setString(5, entityNew.getWhere());
+			myStmt.setDate(6, entityNew.getDates());
+			myStmt.setFloat(7, entityNew.getSumm());
 			myStmt.setLong(8, idPast);
 			myStmt.executeUpdate();
 		} finally {
@@ -129,7 +130,7 @@ public class ConvertSaverDAO {
 	public void Delete(Long id) throws Exception {
 		PreparedStatement myStmt = null;
 		try {
-			myStmt = myConn.prepareStatement("DELETE FROM convertSaver WHERE id=?");
+			myStmt = myConn.prepareStatement("DELETE FROM сonvertSaver WHERE id=?");
 			myStmt.setLong(1, id);
 			myStmt.executeUpdate();
 		} finally {
@@ -142,13 +143,13 @@ public class ConvertSaverDAO {
 		Long idcurrencyCurrent = myRs.getLong("currencyCurrent");
 		Long idcurrencyNew= myRs.getLong("currencyNew");
 		Float count= myRs.getFloat("count");
-		Float courseToOneDollar= myRs.getFloat("courseToOneDollar");
+		String courseToOneDollar= myRs.getString("courseToOneDollar");
 		String where = myRs.getString("where");
 		Date dates = myRs.getDate("dates");
 		Float summ= myRs.getFloat("summ");
 		
-		Currency currencyCurrent  = new CurrencyDAO().read(idcurrencyCurrent );
-		Currency currencyNew  = new CurrencyDAO().read(idcurrencyNew );
+		Currency currencyCurrent  =ApplicationController.currencyController.DAO.read(idcurrencyCurrent );
+		Currency currencyNew  = ApplicationController.currencyController.DAO.read(idcurrencyNew );
 		
 		ConvertSaver temp = new ConvertSaver(currencyCurrent, currencyNew, count, courseToOneDollar, where, dates, summ);
 		temp.setId(id);

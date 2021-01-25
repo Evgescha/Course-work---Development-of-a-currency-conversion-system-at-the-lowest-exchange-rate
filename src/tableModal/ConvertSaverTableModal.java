@@ -17,7 +17,7 @@ public class ConvertSaverTableModal extends AbstractTableModel {
 	public static final int COL_DATES = 6;
 	public static final int COL_SUMM = 7;
 
-	private final String[] columnNames = { "ИД", "Валюта", "Курс к одному доллару", "В каком банке" };
+	private final String[] columnNames = { "ИД", "Из", "В", "Сколько", "Курс", "Где", "Дата", "Получится"};
 	private List<ConvertSaver> list;
 
 	public ConvertSaverTableModal(List<ConvertSaver> list) {

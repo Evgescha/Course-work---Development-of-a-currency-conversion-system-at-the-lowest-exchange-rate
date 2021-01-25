@@ -6,7 +6,7 @@ public class ConvertSaver extends AbstractEntity {
 	private Currency currencyCurrent;
 	private Currency currencyNew;
 	private float count;
-	private float courseToOneDollar;
+	private String courseToOneDollar;
 	private String where;
 	private Date dates;
 	private float summ;
@@ -15,7 +15,7 @@ public class ConvertSaver extends AbstractEntity {
 		super();
 	}
 
-	public ConvertSaver(Currency currencyCurrent, Currency currencyNew, float count, float courseToOneDollar,
+	public ConvertSaver(Currency currencyCurrent, Currency currencyNew, float count, String courseToOneDollar,
 			String where, Date dates, float summ) {
 		super();
 		this.currencyCurrent = currencyCurrent;
@@ -51,11 +51,11 @@ public class ConvertSaver extends AbstractEntity {
 		this.count = count;
 	}
 
-	public float getCourseToOneDollar() {
+	public String getCourseToOneDollar() {
 		return courseToOneDollar;
 	}
 
-	public void setCourseToOneDollar(float courseToOneDollar) {
+	public void setCourseToOneDollar(String courseToOneDollar) {
 		this.courseToOneDollar = courseToOneDollar;
 	}
 
@@ -81,6 +81,14 @@ public class ConvertSaver extends AbstractEntity {
 
 	public void setSumm(float summ) {
 		this.summ = summ;
+	}
+
+	@Override
+	public String toString() {
+		return "Из " + currencyCurrent.getName() + " в " + currencyNew.getName() + " в размере " + count +"\n"
+				+courseToOneDollar + ",\n"
+				+ where
+				+ ",\n В новой валюте выйдет "+ summ;
 	}
 
 }

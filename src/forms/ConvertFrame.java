@@ -22,33 +22,40 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
+import com.toedter.calendar.JDateChooser;
+
 import controller.ApplicationController;
-import entity.Course;
+import entity.ConvertSaver;
 import entity.Currency;
 
-
-public class CourseFrame extends JFrame {
+public class ConvertFrame extends JFrame {
 	private JTextField textField;
 	private JTextField textField_1;
 	private JTable table;
 	private JComboBox<Currency> comboBoxCurrency;
+	private JComboBox<Currency> comboBoxCurrency2;
+	private JDateChooser dateChooser;
 	private JTextField textField_2;
 
-	public CourseFrame() {
+	
+	private ConvertSaver convertSaver=null;
+	
+	
+	public ConvertFrame() {
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
 				back();
 			}
 		});
-		setTitle("Расход");
+		setTitle("Обмен");
 		setBounds(100, 100, 823, 490);
 		getContentPane().setLayout(new BorderLayout(0, 0));
 
 		JPanel panel = new JPanel();
 		getContentPane().add(panel, BorderLayout.NORTH);
 
-		JLabel lblNewLabel_4 = new JLabel("Введите название диска для поиска");
+		JLabel lblNewLabel_4 = new JLabel("Введите название исходной валюты для поиска");
 		panel.add(lblNewLabel_4);
 
 		textField = new JTextField();
@@ -67,19 +74,24 @@ public class CourseFrame extends JFrame {
 		panel_1.setBorder(new EmptyBorder(3, 3, 3, 3));
 		getContentPane().add(panel_1, BorderLayout.WEST);
 
-		JLabel lblNewLabel = new JLabel("Валюта");
+		JLabel lblNewLabel = new JLabel("Исходная валюта");
 
 		textField_1 = new JTextField();
 		textField_1.setColumns(10);
 
-		JButton btnNewButton = new JButton("Добавить");
+		JButton btnNewButton = new JButton("Сохранить в базу");
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				actionCreateButton();
+				try {
+					actionCreateButton();
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 		});
 
-		JButton btnNewButton_3 = new JButton("Удалить");
+		JButton btnNewButton_3 = new JButton("Удалить с базы");
 		btnNewButton_3.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				actionDeleteButton();
@@ -91,16 +103,37 @@ public class CourseFrame extends JFrame {
 		comboBoxCurrency = new JComboBox();
 		panel_1.add(comboBoxCurrency);
 
-		JLabel lblNewLabel_1_2 = new JLabel("Курс единицы валюты к доллару");
+		JLabel lblNewLabel_1_1 = new JLabel("На какую меняем");
+		panel_1.add(lblNewLabel_1_1);
+
+		comboBoxCurrency2 = new JComboBox();
+		panel_1.add(comboBoxCurrency2);
+
+		JLabel lblNewLabel_1_2 = new JLabel("Количество старой валюты");
 		panel_1.add(lblNewLabel_1_2);
 		panel_1.add(textField_1);
 
-		JLabel lblNewLabel_1_2_1 = new JLabel("Название банка");
+		JLabel lblNewLabel_1_2_1 = new JLabel("Дата обмена");
 		panel_1.add(lblNewLabel_1_2_1);
+
+		dateChooser = new JDateChooser();
+		panel_1.add(dateChooser);
+		
+		JLabel lblNewLabel_1_2_2 = new JLabel("Итого получится");
+		panel_1.add(lblNewLabel_1_2_2);
 		
 		textField_2 = new JTextField();
+		textField_2.setEditable(false);
 		textField_2.setColumns(10);
 		panel_1.add(textField_2);
+		
+		JButton btnNewButton_2 = new JButton("Поиск наименьшего курса");
+		btnNewButton_2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				findMinimumCourse();
+			}
+		});
+		panel_1.add(btnNewButton_2);
 		panel_1.add(btnNewButton);
 		panel_1.add(btnNewButton_3);
 
@@ -119,7 +152,7 @@ public class CourseFrame extends JFrame {
 		if (table.getRowCount() > 0 && table.getSelectedRowCount() > 0) {
 			int row = table.getSelectedRow();
 			String id = table.getModel().getValueAt(row, 0).toString();
-			ApplicationController.courseController.actionDeleteButton(Long.parseLong(id));
+			ApplicationController.convertController.actionDeleteButton(Long.parseLong(id));
 		}
 	}
 
@@ -127,32 +160,34 @@ public class CourseFrame extends JFrame {
 		if (table.getRowCount() > 0)
 			try {
 				int row = table.getSelectedRow();
-				Course entity = (Course) table.getModel().getValueAt(row, 99);
+				ConvertSaver entity = (ConvertSaver) table.getModel().getValueAt(row, 99);
 
-				Currency currency = entity.getCurrency();
+				Currency CurrencyCur = entity.getCurrencyCurrent();
+				Currency CurrencyNew = entity.getCurrencyNew();
 
-				comboBoxCurrency.getModel().setSelectedItem(currency);
-				textField_1.setText(entity.getCourseToOneDollar() + "");
-				textField_2.setText(entity.getWhere() + "");
+				comboBoxCurrency.getModel().setSelectedItem(CurrencyCur);
+				comboBoxCurrency2.getModel().setSelectedItem(CurrencyNew);
+				textField_1.setText(entity.getCount() + "");
+				dateChooser.setDate(entity.getDates());
 			} catch (Exception e) {
 			}
 	}
 
-	private void actionCreateButton() {
-		if (allFieldIsRight()) {
-			Course course = new Course((Currency) comboBoxCurrency.getSelectedItem(),Float.parseFloat(textField_1.getText()),textField_2.getText());
-			ApplicationController.courseController.actionCreateButton(course);
+	private void actionCreateButton() throws Exception {
+		if (allFieldIsRight() && convertSaver!=null) {
+			ApplicationController.convertController.actionCreateButton(convertSaver);
+			convertSaver=null;
 		}
 	}
 
 	private void actionSearchButton() {
-		ApplicationController.courseController.actionSearchButton(textField.getText().trim(), table);
+		ApplicationController.convertController.actionSearchButton(textField.getText().trim(), table);
 		refreshComboBoxes();
 	}
 
 	public void refreshView() {
 
-		ApplicationController.courseController.actionSearchButton("", table);
+		ApplicationController.convertController.actionSearchButton("", table);
 		refreshComboBoxes();
 	}
 
@@ -160,13 +195,15 @@ public class CourseFrame extends JFrame {
 		try {
 			comboBoxCurrency.setModel(
 					new DefaultComboBoxModel(ApplicationController.currencyController.getDAO().readAll().toArray()));
-			} catch (Exception e) {
+			comboBoxCurrency2.setModel(
+					new DefaultComboBoxModel(ApplicationController.currencyController.getDAO().readAll().toArray()));
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
 	public void back() {
-		ApplicationController.courseController.back();
+		ApplicationController.convertController.back();
 	}
 
 	private boolean isEmpty() {
@@ -174,12 +211,15 @@ public class CourseFrame extends JFrame {
 		if (textField_1.getText().length() <= 0)
 			flag = true;
 		if (textField_2.getText().length() <= 0)
-			flag = true;	
-		
-		try{Float.parseFloat(textField_1.getText());}catch (Exception e) {
 			flag = true;
+		try {
+			new Date(dateChooser.getDate().getTime());
+			Float.parseFloat(textField_1.getText());
+			Float.parseFloat(textField_2.getText());
+		} catch (Exception e) {
+			flag = true;
+			e.printStackTrace();
 		}
-		
 		if (flag)
 			JOptionPane.showMessageDialog(this, "Проверьте корректное заполнение всех полей.");
 		return flag;
@@ -187,5 +227,18 @@ public class CourseFrame extends JFrame {
 
 	private boolean allFieldIsRight() {
 		return !isEmpty();
+	}
+	
+	private void findMinimumCourse() {
+		//!!!!!!!!!!!!
+		Currency from = (Currency)comboBoxCurrency.getSelectedItem();
+		Currency to = (Currency)comboBoxCurrency2.getSelectedItem();
+		convertSaver=ApplicationController.convertController.actionSearchMinimumCourseButton(from, to, Float.parseFloat(textField_1.getText()));
+			convertSaver.setDates(new Date(dateChooser.getDate().getTime()));
+			textField_2.setText(convertSaver.getSumm()+"");
+		System.out.println(convertSaver);
+
+		JOptionPane.showMessageDialog(this, convertSaver);
+		
 	}
 }

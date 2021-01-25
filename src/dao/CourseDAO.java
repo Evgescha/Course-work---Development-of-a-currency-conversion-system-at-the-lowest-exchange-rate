@@ -100,6 +100,48 @@ public class CourseDAO {
 		}
 	}
 
+	
+	public Course getMaxCourseByCurrency(Long id) throws Exception {
+		Course course= null;
+		PreparedStatement myStmt = null;
+		ResultSet myRs = null;
+		try {
+			myStmt = myConn.prepareStatement("SELECT * FROM course WHERE (id,courseToOneDollar) in "
+					+ "(select id, MAX(courseToOneDollar) from course WHERE currency=? GROUP BY id)");
+			myStmt.setLong(1, id);
+			myRs = myStmt.executeQuery();
+			while (myRs.next()) {
+				course = convertRowToEntity(myRs);
+			}
+
+		} finally {
+			close(myStmt, myRs);
+		}
+		return course;
+	}
+
+	
+	public Course getMinCourseByCurrency(Long id) throws Exception {
+		Course course= null;
+		PreparedStatement myStmt = null;
+		ResultSet myRs = null;
+		try {
+			myStmt = myConn.prepareStatement("SELECT * FROM course WHERE (id,courseToOneDollar) in "
+					+ "(select id, MIN(courseToOneDollar) from course WHERE currency=? GROUP BY id)");
+			myStmt.setLong(1, id);
+			myRs = myStmt.executeQuery();
+			while (myRs.next()) {
+				course = convertRowToEntity(myRs);
+			}
+
+		} finally {
+			close(myStmt, myRs);
+		}
+		return course;
+	}
+
+	
+	
 	public void update(Course entityPast, Long idPast) throws Exception {
 		PreparedStatement myStmt = null;
 		try {
