@@ -51,7 +51,9 @@ public class CurrencyFrame extends JFrame {
 		panel.add(textField_4);
 		textField_4.setColumns(10);
 
+		// кнопка поиска фалюты по имени
 		JButton btnNewButton_1 = new JButton("Искать");
+		// добавление кнопке слушателя. При активации слушателя, вызвать внешний метод
 		btnNewButton_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				actionSearchButton();
@@ -67,22 +69,25 @@ public class CurrencyFrame extends JFrame {
 
 		textField = new JTextField();
 		textField.setColumns(10);
-
+// кнопка добаления записи в бд
 		JButton btnNewButton = new JButton("Добавить");
+		// добавление кнопке слушателя. При активации слушателя, вызвать внешний метод
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				actionCreateButton();
 			}
 		});
-
+//кнопка редактирования записи бд
 		JButton btnNewButton_2 = new JButton("Редактировать");
+		// добавление кнопке слушателя. При активации слушателя, вызвать внешний метод
 		btnNewButton_2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				actionUpdateButton();
 			}
 		});
-
+// кнопка удаления записи бд
 		JButton btnNewButton_3 = new JButton("Удалить");
+		// добавление кнопке слушателя. При активации слушателя, вызвать внешний метод
 		btnNewButton_3.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				actionDeleteButton();
@@ -120,6 +125,7 @@ public class CurrencyFrame extends JFrame {
 
 	}
 
+//удаление выбранной в таблице записи
 	private void actionDeleteButton() {
 		if (table.getRowCount() > 0 && table.getSelectedRowCount() > 0) {
 			int row = table.getSelectedRow();
@@ -128,6 +134,7 @@ public class CurrencyFrame extends JFrame {
 		}
 	}
 
+//обновление выбранной в таблице записи
 	private void actionUpdateButton() {
 		if (allFieldIsRight()) {
 
