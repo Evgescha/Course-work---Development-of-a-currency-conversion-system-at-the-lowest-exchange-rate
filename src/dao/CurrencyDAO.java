@@ -94,7 +94,7 @@ public class CurrencyDAO {
 		return null;
 	}
 
-	public void update(String nameNew, String descriptionNew, Float priceNew, Long id) throws Exception {
+	public void update(String nameNew, Long id) throws Exception {
 		PreparedStatement myStmt = null;
 		try {
 			myStmt = myConn.prepareStatement("UPDATE currency SET name=? WHERE id=?");
